@@ -17,6 +17,13 @@ class AddressSchema(graphene.ObjectType):
     country = graphene.String()
 
 
+class CustomerSchema(graphene.ObjectType):
+    first_name = graphene.String()
+    last_name = graphene.String()
+    email = graphene.String()
+    phone_number = graphene.Int()
+
+
 class AddressInput(graphene.InputObjectType):
     street = graphene.String(required=True)
     number = graphene.Int(required=True)

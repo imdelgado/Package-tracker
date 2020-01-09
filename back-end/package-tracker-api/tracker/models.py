@@ -14,7 +14,7 @@ graph = Graph(
 class BaseModel(GraphObject):
     def __init__(self, **kwargs):
         for key, value in kwargs.items():
-            if hasattr(self,key):
+            if hasattr(self, key):
                 setattr(self, key, value)
 
     @property
@@ -68,3 +68,22 @@ class Address(BaseModel):
 
     def fetch(self, _id):
         return self.match(graph, _id).first()
+
+
+class Customer(BaseModel):
+    __primarykey__ = 'phone_number'
+
+    first_name: Property()
+    last_name: Property()
+    email: Property()
+    phone_number: Property()
+
+    def as_dict(self):
+        return {
+            'first_name': self.first_name,
+            'last_name': self.last_name,
+            'email': self.last_name
+        }
+
+    def fetch(self):
+        return self.match(graph, self.phone_number).first()
