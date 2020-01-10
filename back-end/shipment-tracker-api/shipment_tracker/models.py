@@ -1,7 +1,7 @@
 from py2neo.ogm import GraphObject, Property, RelatedTo
 from py2neo import Graph
 
-import tracker.settings as settings
+import shipment_tracker.settings as settings
 
 graph = Graph(
     host=settings.NEO4J_HOST,
@@ -25,27 +25,45 @@ class BaseModel(GraphObject):
         graph.push(self)
 
 
-class Package(BaseModel):
+class Shipment(BaseModel):
     __primarykey__ = 'tracking_number'
 
     tracking_number = Property()
-    weight = Property()
-    is_box = Property()
+    creation_date = Property()
 
-    send_to = RelatedTo('Address', 'SEND_TO')
+    ship_to = RelatedTo('Address', 'SHIP_TO')
+    from_customer = RelatedTo('Customer', 'FROM')
+    to = RelatedTo('Customer', 'TO')
+    package = RelatedTo('Package', 'SEND')
 
     def as_dict(self):
         return {
-            'tracking_number': self.tracking_number,
-            'weight': self.weight,
-            'is_box': self.is_box
+            'ship_to': self.ship_to,
+            'to': self.to
         }
 
-    def set_send_to(self, **kwargs):
-        self.send_to.add(Address(**kwargs))
+    def add_links(self, **kwargs):
+        self.ship_to.add(Address(**kwargs.get('ship_to_address')))
+        self.from_customer.add(Customer(**kwargs.get('send_from')))
+        self.to.add(Customer(**kwargs.get('send_to')))
+        self.package.add(Package(**kwargs.get('package_info')))
 
     def fetch(self):
         return self.match(graph, self.tracking_number).first()
+
+
+class Package(BaseModel):
+    kg_weight = Property()
+    packing_type = Property()
+
+    def as_dict(self):
+        return {
+            'kg_weight': self.weight,
+            'packing_type': self.packing_type
+        }
+
+    def fetch(self, _id):
+        return self.match(graph, _id).first()
 
 
 class Address(BaseModel):
@@ -73,16 +91,17 @@ class Address(BaseModel):
 class Customer(BaseModel):
     __primarykey__ = 'phone_number'
 
-    first_name: Property()
-    last_name: Property()
-    email: Property()
-    phone_number: Property()
+    first_name = Property()
+    last_name = Property()
+    email = Property()
+    phone_number = Property()
 
     def as_dict(self):
         return {
             'first_name': self.first_name,
             'last_name': self.last_name,
-            'email': self.last_name
+            'email': self.last_name,
+            'phone_number': self.phone_number
         }
 
     def fetch(self):

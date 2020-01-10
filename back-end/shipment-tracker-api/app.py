@@ -1,5 +1,5 @@
-import tracker.settings as settings
-from tracker import create_app
+import shipment_tracker.settings as settings
+from shipment_tracker import create_app
 
 app = create_app()
 
