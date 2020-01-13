@@ -26,13 +26,21 @@ class CustomerSchema(graphene.ObjectType):
 class ShipmentSchema(graphene.ObjectType):
     tracking_number = graphene.String()
     ship_to = graphene.List(AddressSchema)
-    send_from = graphene.List(CustomerSchema)
+    from_customer = graphene.List(CustomerSchema)
     to = graphene.List(CustomerSchema)
     package = graphene.List(PackageSchema)
 
     def resolve_ship_to(self, info):
         return [AddressSchema(**address.as_dict()) for address in self.ship_to]
 
+    def resolve_send_from(self, info):
+        return [CustomerSchema(**customer.as_dict()) for customer in self.send_from]
+
+    def resolve_to(self, info):
+        return [CustomerSchema(**customer.as_dict()) for customer in self.to]
+
+    def resolve_package(self, info):
+        return [PackageSchema(**package.as_dict()) for package in self.package]
 
 class PackageInput(graphene.InputObjectType):
     kg_weight = graphene.Int(required=True)
@@ -56,14 +64,13 @@ class CustomerInput(graphene.InputObjectType):
 
 
 class Query(graphene.ObjectType):
-    shipment = graphene.Field(lambda: ShipmentSchema, tracking_number=graphene.String())
+    shipment = graphene.List(lambda: ShipmentSchema)
     package = graphene.Field(lambda: PackageSchema)
     address = graphene.Field(lambda: AddressSchema)
     customer = graphene.Field(lambda: CustomerSchema, phone_number=graphene.String())
 
-    def resolve_shipment(self, info, tracking_number):
-        shipment = Shipment(tracking_number=tracking_number).fetch()
-        return Shipment(**shipment.as_dict())
+    def resolve_shipment(self, info):
+        return [ShipmentSchema(**shipment.as_dict()) for shipment in Shipment().all]
 
 
 class CreateShipment(graphene.Mutation):

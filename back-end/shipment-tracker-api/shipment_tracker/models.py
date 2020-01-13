@@ -58,7 +58,7 @@ class Package(BaseModel):
 
     def as_dict(self):
         return {
-            'kg_weight': self.weight,
+            'kg_weight': self.kg_weight,
             'packing_type': self.packing_type
         }
 
