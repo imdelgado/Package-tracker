@@ -42,6 +42,7 @@ class ShipmentSchema(graphene.ObjectType):
     def resolve_package(self, info):
         return [PackageSchema(**package.as_dict()) for package in self.package]
 
+
 class PackageInput(graphene.InputObjectType):
     kg_weight = graphene.Int(required=True)
     packing_type = graphene.String(required=True)

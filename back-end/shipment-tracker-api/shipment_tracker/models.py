@@ -38,8 +38,11 @@ class Shipment(BaseModel):
 
     def as_dict(self):
         return {
+            'tracking_number': self.tracking_number,
             'ship_to': self.ship_to,
-            'to': self.to
+            'from_customer': self.from_customer,
+            'to': self.to,
+            'package': self.package
         }
 
     def add_links(self, **kwargs):
