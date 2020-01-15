@@ -7,6 +7,7 @@ const SHIPMENTS_QUERY = gql`
   {
     shipment {
       tracking_number
+      creation_date
     }
   }
 `
