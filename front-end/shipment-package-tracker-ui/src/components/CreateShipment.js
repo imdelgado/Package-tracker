@@ -14,68 +14,99 @@ const CREATE_SHIPMENT = gql`
           },
           success
         }
-    }
-    `
+    }`
 
 class Address extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      street: '',
-      number: 0,
-      zip_code: '',
-      city: '',
-      state: '',
-      country: '',
-    };
-  }
-
-  changeHandler = (event) => {
-    let propName = event.target.name;
-    let propValue = event.target.value;
-    this.setState({[propName]: propValue});
-  };
-
   render() {
     return(
       <div>
         <p>Street:</p>
-        <input className="mb2" value={this.state.street} onChange={this.changeHandler}
+        <input name="street" className="mb2" value={this.props.ship_to.street} onChange={e => this.props.handleShipTo(e)}
           type="text" placeholder="Street"/>
         <p>Street number:</p>
-        <input className="mb2" value={this.state.number} onChange={this.changeHandler}
+        <input name="number" className="mb2" value={this.props.ship_to.number} onChange={e => this.props.handleShipTo(e)}
           type="number" placeholder="Street number"/>
+        <p>Zip code:</p>
+        <input name="zip_code" className="mb2" value={this.props.ship_to.zip_code} onChange={e => this.props.handleShipTo(e)}
+          type="text" placeholder="Zip code"/>
+        <p>city:</p>
+        <input name="city" className="mb2" value={this.props.ship_to.city} onChange={e => this.props.handleShipTo(e)}
+          type="text" placeholder="City"/>
       </div>)
   }
 }
 
-const CreateShipment = props => {
-  const [tracking_number, setTrackingNumber] = React.useState('')
+class CreateShipment extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {
+      tracking_number: '',
+      ship_to: {
+        street: '',
+        number: 0,
+        zip_code: '',
+        city: '',
+        state: '',
+        country: '',
+      }
+    }
+  };
 
-  const [state, executeMutation] = useMutation(CREATE_SHIPMENT)
+  onChange(e){
+    const key = e.target.name;
+    const value = e.target.value;
 
-  const submit = React.useCallback(() => {
-    executeMutation({
-      tracking_number
-    })
-  }, [executeMutation,tracking_number])
+    this.setState({[key]: value})
+  }
 
-  return (
-    <div>
-      <div className="flex flex-column mt3">
-        <input className="mb2" value={tracking_number} onChange={e => setTrackingNumber(e.target.value)}
-        type="text" placeholder="Shipment tracking_number"/>
-      </div>
-      <div>
-        <Address/>
-      </div>
-      <button disabled={state.fetching} onClick={submit}>
-        Submit
-      </button>
-    </div>
-  );
+  handleShipTo(e){
+    const key = e.target.name;
+    const value = e.target.value;
+
+    console.log('hehe')
+
+    this.setState({ship_to:{[key]:value}});
+  }
+
+  render() {
+    return(
+        <div>
+          <input name="tracking_number" className="mb-2" value={this.state.tracking_number} onChange={e => this.onChange(e)} type="text"
+                 placeholder="Shipment tracking number"/>
+          <div>
+            <Address ship_to={this.state.ship_to} handleShipTo={this.handleShipTo.bind(this)}/>
+          </div>
+        </div>
+    )
+  }
 
 }
 
+// const CreateShipment = props => {
+//   const [tracking_number, setTrackingNumber] = React.useState('')
+//   const [state, executeMutation] = useMutation(CREATE_SHIPMENT)
+//
+//   const submit = React.useCallback(() => {
+//     executeMutation({
+//       tracking_number
+//     })
+//   }, [executeMutation,tracking_number])
+//
+//   return (
+//     <div>
+//       <div className="flex flex-column mt3">
+//         <input className="mb2" value={tracking_number} onChange={e => setTrackingNumber(e.target.value)}
+//         type="text" placeholder="Shipment tracking_number"/>
+//       </div>
+//       <div>
+//         <Address/>
+//       </div>
+//       <button disabled={state.fetching} onClick={submit}>
+//         Submit
+//       </button>
+//     </div>
+//   );
+//
+// }
 
 export default CreateShipment

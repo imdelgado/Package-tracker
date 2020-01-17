@@ -39,6 +39,7 @@ class Shipment(BaseModel):
     def as_dict(self):
         return {
             'tracking_number': self.tracking_number,
+            'creation_date': self.creation_date,
             'ship_to': self.ship_to,
             'from_customer': self.from_customer,
             'to': self.to,
