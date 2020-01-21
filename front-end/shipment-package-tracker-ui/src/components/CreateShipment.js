@@ -1,11 +1,12 @@
-import React from 'react'
 import gql from 'graphql-tag'
-import { useMutation } from 'urql'
+import {useMutation} from 'urql'
+import React from "react";
+import {ShipFromInfo, ShipToInfo} from "./forms/StepForms";
 
 const CREATE_SHIPMENT = gql`
-  mutation CreateShipment($tracking_number: String!, $ship_to_address: AdrressInput!, $send_from: CustomerInput!,
-    $send_to: CustomerImput!, $package_info: PackageInput!){
-      create_shipment(tracking_number: $tracking_number, ship_to_address: $ship_to_address, send_from: $send_from,
+  mutation CreateShipment($ship_to_address: AddressInput!, $send_from: CustomerInput!,
+    $send_to: CustomerInput!, $package_info: PackageInput!){
+      create_shipment(ship_to_address: $ship_to_address, send_from: $send_from,
         send_to: $send_to, package_info: $package_info){
           shipment{
             tracking_number,ship_to{
@@ -14,99 +15,120 @@ const CREATE_SHIPMENT = gql`
           },
           success
         }
-    }`
+    }`;
 
-class Address extends React.Component {
-  render() {
-    return(
-      <div>
-        <p>Street:</p>
-        <input name="street" className="mb2" value={this.props.ship_to.street} onChange={e => this.props.handleShipTo(e)}
-          type="text" placeholder="Street"/>
-        <p>Street number:</p>
-        <input name="number" className="mb2" value={this.props.ship_to.number} onChange={e => this.props.handleShipTo(e)}
-          type="number" placeholder="Street number"/>
-        <p>Zip code:</p>
-        <input name="zip_code" className="mb2" value={this.props.ship_to.zip_code} onChange={e => this.props.handleShipTo(e)}
-          type="text" placeholder="Zip code"/>
-        <p>city:</p>
-        <input name="city" className="mb2" value={this.props.ship_to.city} onChange={e => this.props.handleShipTo(e)}
-          type="text" placeholder="City"/>
-      </div>)
-  }
-}
-
-class CreateShipment extends React.Component {
-  constructor(props){
-    super(props);
-    this.state = {
-      tracking_number: '',
-      ship_to: {
+const CreateShipment = props => {
+    const [currentStep, setCurrentStep] = React.useState(1);
+    const [ship_to_address, setShipTo] = React.useState({
         street: '',
         number: 0,
         zip_code: '',
         city: '',
         state: '',
         country: '',
-      }
-    }
+    });
+    const [send_from, setSendFrom] = React.useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone_number: '',
+    });
+    const [send_to, setSendTo] = React.useState({
+        first_name: '',
+        last_name: '',
+        email: '',
+        phone_number: '',
+    });
+    const [package_info, setPackageInfo] = React.useState({
+        kg_weight: 0,
+        packing_type: '',
+    });
+
+
+  const [state, executeMutation] = useMutation(CREATE_SHIPMENT);
+
+  const updateShipTo = e => {
+      setShipTo({...ship_to_address,[e.target.name]:e.target.value});
   };
 
-  onChange(e){
-    const key = e.target.name;
-    const value = e.target.value;
+  const updateSendFrom = e => {
+      setSendFrom({...send_from,[e.target.name]:e.target.value});
+  };
 
-    this.setState({[key]: value})
+  const updateSendTo = e => {
+      setSendTo({...send_to,[e.target.name]:e.target.value});
+  };
+
+  const updatePackageInfo = e => {
+      setPackageInfo({...package_info,[e.target.name]:e.target.value})
+  };
+
+  function _next(currentStep){
+      let nextStep = currentStep;
+
+      nextStep = nextStep >= 2? 3: nextStep + 1;
+      setCurrentStep(nextStep)
   }
 
-  handleShipTo(e){
-    const key = e.target.name;
-    const value = e.target.value;
+  function _prev(currentStep){
+      let prevStep = currentStep;
 
-    console.log('hehe')
-
-    this.setState({ship_to:{[key]:value}});
+      prevStep = prevStep <= 1?1: prevStep -1;
+      setCurrentStep(currentStep)
   }
 
-  render() {
-    return(
-        <div>
-          <input name="tracking_number" className="mb-2" value={this.state.tracking_number} onChange={e => this.onChange(e)} type="text"
-                 placeholder="Shipment tracking number"/>
-          <div>
-            <Address ship_to={this.state.ship_to} handleShipTo={this.handleShipTo.bind(this)}/>
-          </div>
-        </div>
-    )
-  }
+  const previoudButton = () => {
+      console.log(currentStep)
+      if(currentStep !== 1){
+          return (<button className="btn btn-secondary" type="button" onClick={_prev}> Back </button>)
+      }
+      return null;
+  };
 
-}
+  const nextButton = () => {
+      console.log(currentStep)
+      if(currentStep < 3){
+          return (<button className="btn btn-secondary" type="button" onClick={_next}> Next </button>)
+      }
+      return null;
+  };
 
-// const CreateShipment = props => {
-//   const [tracking_number, setTrackingNumber] = React.useState('')
-//   const [state, executeMutation] = useMutation(CREATE_SHIPMENT)
-//
-//   const submit = React.useCallback(() => {
-//     executeMutation({
-//       tracking_number
-//     })
-//   }, [executeMutation,tracking_number])
-//
-//   return (
-//     <div>
-//       <div className="flex flex-column mt3">
-//         <input className="mb2" value={tracking_number} onChange={e => setTrackingNumber(e.target.value)}
-//         type="text" placeholder="Shipment tracking_number"/>
-//       </div>
-//       <div>
-//         <Address/>
-//       </div>
-//       <button disabled={state.fetching} onClick={submit}>
-//         Submit
-//       </button>
-//     </div>
-//   );
-//
-// }
+  const submit = React.useCallback(() => {
+    executeMutation({
+      ship_to_address,send_from,send_to,package_info
+    })
+  }, [executeMutation,ship_to_address,send_from,send_to,package_info]);
+
+  return (
+      <React.Fragment>
+          <h1>Create new shipment</h1>
+          <form>
+            <ShipToInfo currentStep={currentStep} address={ship_to_address} send_to={send_to}
+                        onChangeShipTo={updateShipTo.bind(this)} onChangeSendTo={updateSendTo.bind(this)}/>
+
+            <ShipFromInfo currentStep={currentStep} send_from={send_from} onChangeSendFrom={updateSendFrom.bind(this)}/>
+
+            {previoudButton()}{nextButton()}
+          </form>
+      </React.Fragment>
+    // <div>
+    //     <div>
+    //         <Address address={ship_to_address} onChange={updateShipTo.bind(this)}/>
+    //     </div>
+    //     <div>
+    //         <Customer customer={send_from} onChange={updateSendFrom.bind(this)}/>
+    //     </div>
+    //     <div>
+    //         <Customer customer={send_to} onChange={updateSendTo.bind(this)}/>
+    //     </div>
+    //     <div>
+    //         <Package package={package_info} onChange={updatePackageInfo.bind(this)}/>
+    //     </div>
+    //   <button disabled={state.fetching} onClick={submit}>
+    //     Submit
+    //   </button>
+    // </div>
+  );
+};
 
 export default CreateShipment
