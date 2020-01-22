@@ -2,7 +2,6 @@ import gql from 'graphql-tag'
 import {useMutation} from 'urql'
 import React from "react";
 import {ShipFromInfo, ShipToInfo, PackageInfo} from "./forms/StepForms";
-import {Package} from "./forms/ShipmentForms";
 
 const CREATE_SHIPMENT = gql`
   mutation CreateShipment($ship_to_address: AddressInput!, $send_from: CustomerInput!,
