@@ -13,6 +13,9 @@ class Address extends React.Component {
         <p>Zip code:</p>
         <input name="zip_code" className="mb2" value={this.props.address.zip_code} onChange={e => this.props.onChange(e)}
           type="text" placeholder="Zip code"/>
+        <p>State:</p>
+        <input name="state" className="mb2" value={this.props.address.state} onChange={e => this.props.onChange(e)}
+          type="text" placeholder="State"/>
         <p>City:</p>
         <input name="city" className="mb2" value={this.props.address.city} onChange={e => this.props.onChange(e)}
           type="text" placeholder="City"/>

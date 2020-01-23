@@ -79,8 +79,8 @@ const CreateShipment = props => {
   const submit = React.useCallback(() => {
     executeMutation({
       ship_to_address,send_from,send_to,package_info
-    })
-  }, [executeMutation,ship_to_address,send_from,send_to,package_info]);
+    }).then(props.history.push('/'))
+  }, [executeMutation,ship_to_address,send_from,send_to,package_info, props.history]);
 
   return (
       <React.Fragment>
