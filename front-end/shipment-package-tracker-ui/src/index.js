@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom';
 import './styles/index.css';
 import App from './components/App';
 import * as serviceWorker from './serviceWorker';
+import { BrowserRouter } from "react-router-dom";
 
 import {Provider, Client, dedupExchange, fetchExchange} from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
@@ -16,9 +17,11 @@ const client = new Client({
 })
 
 ReactDOM.render(
-  <Provider value={client}>
-    <App />
-  </Provider>,
+    <BrowserRouter>
+        <Provider value={client}>
+            <App />
+        </Provider>
+    </BrowserRouter>,
   document.getElementById('root'));
 
 // If you want your app to work offline and load faster, you can change

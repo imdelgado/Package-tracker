@@ -1,7 +1,7 @@
 import gql from 'graphql-tag'
 import {useMutation} from 'urql'
 import React from "react";
-import {ShipFromInfo, ShipToInfo} from "./forms/StepForms";
+import {ShipFromInfo, ShipToInfo, PackageInfo} from "./forms/StepForms";
 
 const CREATE_SHIPMENT = gql`
   mutation CreateShipment($ship_to_address: AddressInput!, $send_from: CustomerInput!,
@@ -63,41 +63,24 @@ const CreateShipment = props => {
       setPackageInfo({...package_info,[e.target.name]:e.target.value})
   };
 
-  function _next(currentStep){
+  const _next = () => {
       let nextStep = currentStep;
-
-      nextStep = nextStep >= 2? 3: nextStep + 1;
+      nextStep = nextStep >= 2?3:nextStep +1;
       setCurrentStep(nextStep)
-  }
-
-  function _prev(currentStep){
-      let prevStep = currentStep;
-
-      prevStep = prevStep <= 1?1: prevStep -1;
-      setCurrentStep(currentStep)
-  }
-
-  const previoudButton = () => {
-      console.log(currentStep)
-      if(currentStep !== 1){
-          return (<button className="btn btn-secondary" type="button" onClick={_prev}> Back </button>)
-      }
-      return null;
   };
 
-  const nextButton = () => {
-      console.log(currentStep)
-      if(currentStep < 3){
-          return (<button className="btn btn-secondary" type="button" onClick={_next}> Next </button>)
-      }
-      return null;
+  const _prev = () => {
+      let prevStep = currentStep;
+
+      prevStep = prevStep <=1?1:prevStep-1;
+      setCurrentStep(prevStep);
   };
 
   const submit = React.useCallback(() => {
     executeMutation({
       ship_to_address,send_from,send_to,package_info
-    })
-  }, [executeMutation,ship_to_address,send_from,send_to,package_info]);
+    }).then(props.history.push('/'))
+  }, [executeMutation,ship_to_address,send_from,send_to,package_info, props.history]);
 
   return (
       <React.Fragment>
@@ -107,27 +90,13 @@ const CreateShipment = props => {
                         onChangeShipTo={updateShipTo.bind(this)} onChangeSendTo={updateSendTo.bind(this)}/>
 
             <ShipFromInfo currentStep={currentStep} send_from={send_from} onChangeSendFrom={updateSendFrom.bind(this)}/>
+            <PackageInfo currentStep={currentStep} package_info={package_info} onChangePackageInfo={updatePackageInfo.bind(this)}/>
+            <button className="btn btn-secondary" type="button" onClick={_prev}> Back </button>
+            <button className="btn btn-secondary" type="button" onClick={_next}> Next </button>
+            <button className="btn btn-secondary" type="button" disabled={currentStep !== 3} onClick={submit}> Submit </button>
 
-            {previoudButton()}{nextButton()}
           </form>
       </React.Fragment>
-    // <div>
-    //     <div>
-    //         <Address address={ship_to_address} onChange={updateShipTo.bind(this)}/>
-    //     </div>
-    //     <div>
-    //         <Customer customer={send_from} onChange={updateSendFrom.bind(this)}/>
-    //     </div>
-    //     <div>
-    //         <Customer customer={send_to} onChange={updateSendTo.bind(this)}/>
-    //     </div>
-    //     <div>
-    //         <Package package={package_info} onChange={updatePackageInfo.bind(this)}/>
-    //     </div>
-    //   <button disabled={state.fetching} onClick={submit}>
-    //     Submit
-    //   </button>
-    // </div>
   );
 };
 

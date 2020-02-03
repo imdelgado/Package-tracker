@@ -36,3 +36,25 @@
     transform: rotate(360deg);
   }
 }
+
+.p-name {
+  text-transform: capitalize;
+  font-weight: bold;
+}
+
+.p-address {
+  text-transform: capitalize;
+  font-style: italic;
+}
+
+.div-shipto {
+  display: inline-block;
+  text-align: left;
+  align-content: start;
+}
+
+.div-package {
+  display: inline-block;
+  text-align: right;
+  alignment: right;
+}

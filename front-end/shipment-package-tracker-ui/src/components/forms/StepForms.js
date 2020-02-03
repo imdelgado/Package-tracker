@@ -1,4 +1,4 @@
-import {Address, Customer} from "./ShipmentForms";
+import {Address, Customer, Package} from "./ShipmentForms";
 import React from "react";
 
 class ShipToInfo extends React.Component {
@@ -34,7 +34,21 @@ class ShipFromInfo extends React.Component {
     }
 }
 
+class PackageInfo extends React.Component {
+    render() {
+        if (this.props.currentStep !== 3){
+            return null
+        }
+        return(
+            <div>
+                <Package package={this.props.package_info} onChange={this.props.onChangePackageInfo.bind(this)}/>
+            </div>
+        )
+    }
+}
+
 export {
     ShipToInfo,
-    ShipFromInfo
+    ShipFromInfo,
+    PackageInfo
 }
