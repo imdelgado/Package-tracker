@@ -1,5 +1,7 @@
 import graphene
-from .models import Package, Shipment, Address
+from .CustomScalars import DateTimeCustom
+from .Builders import build_shipment
+from .models import Shipment
 
 
 class PackageSchema(graphene.ObjectType):
@@ -25,6 +27,7 @@ class CustomerSchema(graphene.ObjectType):
 
 class ShipmentSchema(graphene.ObjectType):
     tracking_number = graphene.String()
+    creation_date = DateTimeCustom()
     ship_to = graphene.List(AddressSchema)
     from_customer = graphene.List(CustomerSchema)
     to = graphene.List(CustomerSchema)
@@ -76,7 +79,6 @@ class Query(graphene.ObjectType):
 
 class CreateShipment(graphene.Mutation):
     class Arguments:
-        tracking_number = graphene.String(required=True)
         ship_to_address = AddressInput(required=True)
         send_from = CustomerInput(required=True)
         send_to = CustomerInput(required=True)
@@ -86,8 +88,7 @@ class CreateShipment(graphene.Mutation):
     shipment = graphene.Field(lambda: ShipmentSchema)
 
     def mutate(self, info, **kwargs):
-        shipment = Shipment(**kwargs)
-        shipment.add_links(**kwargs)
+        shipment = build_shipment(**kwargs)
         shipment.save()
 
         return CreateShipment(shipment=shipment, success=True)
