@@ -46,9 +46,3 @@ const ShipmentAccordion = () => {
 };
 
 export default ShipmentAccordion
-
-
-    // <div>
-    //   {shipmentsToRender.map(shipment =>
-    //     <Shipment key={shipment.tracking_number} shipment={shipment}/>)}
-    // </div>

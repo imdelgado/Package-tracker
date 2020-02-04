@@ -8,12 +8,8 @@ class ShipToInfo extends React.Component {
         }
         return (
             <div>
-                <div>
-                    <Address address={this.props.address} onChange={this.props.onChangeShipTo.bind(this)}/>
-                </div>
-                <div>
-                    <Customer customer={this.props.send_to} onChange={this.props.onChangeSendTo.bind(this)}/>
-                </div>
+                <Address address={this.props.address} onChange={this.props.onChangeShipTo.bind(this)}/>
+                <Customer customer={this.props.send_to} onChange={this.props.onChangeSendTo.bind(this)}/>
             </div>
         )
     }
@@ -26,9 +22,7 @@ class ShipFromInfo extends React.Component {
         }
         return (
             <div>
-                <div>
-                    <Customer customer={this.props.send_from} onChange={this.props.onChangeSendFrom.bind(this)}/>
-                </div>
+                <Customer customer={this.props.send_from} onChange={this.props.onChangeSendFrom.bind(this)}/>
             </div>
         )
     }

@@ -2,6 +2,7 @@ import gql from 'graphql-tag'
 import {useMutation} from 'urql'
 import React from "react";
 import {ShipFromInfo, ShipToInfo, PackageInfo} from "./forms/StepForms";
+import {Button, ButtonToolbar, Form} from "react-bootstrap";
 
 const CREATE_SHIPMENT = gql`
   mutation CreateShipment($ship_to_address: AddressInput!, $send_from: CustomerInput!,
@@ -76,6 +77,17 @@ const CreateShipment = props => {
       setCurrentStep(prevStep);
   };
 
+  const inputHeader = () => {
+      if (currentStep === 1){
+          return (<h2>Ship to info</h2>)
+      }else if (currentStep === 2){
+        return (<h2>Ship from info</h2>)
+      }else{
+          return (<h2>Package info</h2>)
+      }
+  };
+
+
   const submit = React.useCallback(() => {
     executeMutation({
       ship_to_address,send_from,send_to,package_info
@@ -84,18 +96,20 @@ const CreateShipment = props => {
 
   return (
       <React.Fragment>
-          <h1>Create new shipment</h1>
-          <form>
+          <div>
+              {inputHeader()}
+              <Form>
             <ShipToInfo currentStep={currentStep} address={ship_to_address} send_to={send_to}
                         onChangeShipTo={updateShipTo.bind(this)} onChangeSendTo={updateSendTo.bind(this)}/>
-
             <ShipFromInfo currentStep={currentStep} send_from={send_from} onChangeSendFrom={updateSendFrom.bind(this)}/>
             <PackageInfo currentStep={currentStep} package_info={package_info} onChangePackageInfo={updatePackageInfo.bind(this)}/>
-            <button className="btn btn-secondary" type="button" onClick={_prev}> Back </button>
-            <button className="btn btn-secondary" type="button" onClick={_next}> Next </button>
-            <button className="btn btn-secondary" type="button" disabled={currentStep !== 3} onClick={submit}> Submit </button>
-
-          </form>
+            <ButtonToolbar>
+                <Button variant="primary" onClick={_prev}>Back</Button>
+                <Button variant="primary" onClick={_next}>Next</Button>
+                <Button variant="success" disabled={currentStep !== 3} onClick={submit}>Submit</Button>
+            </ButtonToolbar>
+          </Form>
+          </div>
       </React.Fragment>
   );
 };

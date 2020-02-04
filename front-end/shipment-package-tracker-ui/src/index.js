@@ -9,12 +9,12 @@ import { BrowserRouter } from "react-router-dom";
 import {Provider, Client, dedupExchange, fetchExchange} from 'urql'
 import { cacheExchange } from '@urql/exchange-graphcache'
 
-const cache = cacheExchange({})
+const cache = cacheExchange({});
 
 const client = new Client({
   url: 'http://localhost:8081/graphql',
   exchanges: [dedupExchange, cache, fetchExchange]
-})
+});
 
 ReactDOM.render(
     <BrowserRouter>

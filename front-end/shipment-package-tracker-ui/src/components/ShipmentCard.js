@@ -16,20 +16,21 @@ const ShipmentCard = ({ shipment }) => {
                 </Accordion.Toggle>
                 <Accordion.Collapse eventKey={shipment.tracking_number}>
                     <Card.Body>
-                        <div className="div-shipto">
-                            <h5>Ship to:</h5>
-                            <div className="div-shipto">
-                                <p className="p-name">{to.first_name} {to.last_name}</p>
-                                <p className="p-address">{ship_to.street} {ship_to.number} #{ship_to.zip_code}, {ship_to.city},
-                                    {ship_to.state} , {ship_to.country}</p>
-                            </div>
-                        </div>
-                        <div className="div-package">
-                            <h5> Package info:</h5>
-                            <div className="div-package">
-                                <p>{package_info.packing_type} weight: {package_info.kg_weight}</p>
-                            </div>
-                        </div>
+                        <div>
+                          <h5>Shipment info:</h5>
+                          <div>
+                            <h6>Ship to:</h6>
+                            <p className="p-name">{to.first_name} {to.last_name}</p>
+                            <p className="p-address">{ship_to.street} {ship_to.number} #{ship_to.zip_code}, {ship_to.city},
+                                {ship_to.state} , {ship_to.country} </p>
+                          </div>
+                          <div className="div-package">
+                              <h5> Package info:</h5>
+                              <div className="div-package">
+                                  <p>{package_info.packing_type} weight: {package_info.kg_weight}</p>
+                              </div>
+                          </div>
+                        </div>  
                     </Card.Body>
                 </Accordion.Collapse>
             </Card.Header>
@@ -38,4 +39,3 @@ const ShipmentCard = ({ shipment }) => {
 };
 
 export default ShipmentCard
-
