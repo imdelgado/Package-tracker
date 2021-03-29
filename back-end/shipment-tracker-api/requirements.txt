@@ -33,7 +33,7 @@ py2neo==4.3.0
 pycodestyle==2.5.0
 pydocstyle==5.0.1
 pyflakes==2.1.1
-Pygments==2.3.1
+Pygments==2.7.4
 pylint==2.4.4
 python-dotenv==0.10.3
 python-jsonrpc-server==0.3.2
